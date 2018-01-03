@@ -14,7 +14,9 @@ public class News {
     private String url;
     private String author;
 
-    public News() {
+    public News(String sourceName) {
+
+        this.sourceName = sourceName;
 
     }
 
