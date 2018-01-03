@@ -14,6 +14,10 @@ public class News {
     private String url;
     private String author;
 
+    public News() {
+
+    }
+
     public News(String sourceName, String title, String urlToImage, String date, String description, String url, String author) {
 
         this.sourceName = sourceName;
