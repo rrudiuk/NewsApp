@@ -17,13 +17,13 @@ public class NewsActivity extends AppCompatActivity {
         ArrayList<News> newsArray = QueryUtils.extractNews();
 
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        ListView newsListView = (ListView) findViewById(R.id.list);
 
         // Create a new adapter that takes an empty list of earthquakes as input
         final NewsAdapter adapter = new NewsAdapter(this, newsArray);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(adapter);
+        newsListView.setAdapter(adapter);
     }
 }
