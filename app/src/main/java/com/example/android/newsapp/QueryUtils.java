@@ -63,7 +63,7 @@ public final class QueryUtils {
 
     }
 
-    public static URL createUrl(String stringUrl) {
+    private static URL createUrl(String stringUrl) {
 
         URL url = null;
 
@@ -77,7 +77,7 @@ public final class QueryUtils {
         return url;
     }
 
-    public static String makeHttpRequest(URL url) throws IOException {
+    private static String makeHttpRequest(URL url) throws IOException {
         // varible that stores the response result
         String jsonResponse = "";
 
@@ -125,7 +125,7 @@ public final class QueryUtils {
      * Convert the {@link InputStream} into a String which contains the
      * whole JSON response from the server.
      */
-    public static String readFromStream(InputStream inputStream) throws IOException {
+    private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
@@ -139,7 +139,7 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    public static ArrayList<News> extractFeatureFromJson(String newsJSON) {
+    private static ArrayList<News> extractFeatureFromJson(String newsJSON) {
 
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(newsJSON)) {

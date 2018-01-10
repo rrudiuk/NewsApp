@@ -1,14 +1,16 @@
 package com.example.android.newsapp;
 
-import android.os.AsyncTask;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewsActivity extends AppCompatActivity {
+public class NewsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<News>> {
 
     public static final String LOG_TAG = NewsActivity.class.getName();
 
@@ -17,6 +19,11 @@ public class NewsActivity extends AppCompatActivity {
 
     /** Adapter for the list of news */
     private NewsAdapter mAdapter;
+    /**
+     * Constant value for the news loader ID. We can choose any integer.
+     * This really only comes into play if you're using multiple loaders.
+     */
+    private static final int NEWS_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,45 +33,45 @@ public class NewsActivity extends AppCompatActivity {
         // Find a reference to the {@link ListView} in the layout
         ListView newsListView = (ListView) findViewById(R.id.list);
 
-        // Create a new adapter that takes an empty list of earthquakes as input
+        // Create a new adapter that takes an empty list of news as input
         mAdapter = new NewsAdapter(this, new ArrayList<News>());
 
+        // Get a reference to the LoaderManager, in order to interact with loaders.
+        LoaderManager loaderManager = getLoaderManager();
+
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface).
+        loaderManager.initLoader(NEWS_LOADER_ID, null, this);
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         newsListView.setAdapter(mAdapter);
-
-        // Start the AsyncTask to fetch the earthquake data
-        NewsAsyncTask task = new NewsAsyncTask();
-        task.execute(NEWS_REQUEST_URL);
     }
 
-    /**
-     * {@link AsyncTask} to perform the network request on a background thread, and then
-     * update the UI with the first earthquake in the response.
-     */
-    private class NewsAsyncTask extends AsyncTask<String, Void, List<News>> {
+    @Override
+    public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
+        Log.v(LOG_TAG, "Loader is being created");
+        return new NewsLoader(this, NEWS_REQUEST_URL);
+    }
 
-        @Override
-        protected List<News> doInBackground(String... urls) {
-            // Don't perform the request if there are no URLs, or the first URL is null.
-            if (urls.length < 1 || urls[0] == null) {
-                return null;
-            }
+    @Override
+    public void onLoadFinished(Loader<List<News>> loader, List<News> news) {
 
-            List<News> result = QueryUtils.fetchNewsData(urls[0]);
-            return result;
+        // Clear the adapter of previous news data
+        mAdapter.clear();
+
+        // If there is a valid list of {@link News}s, then add them to the adapter's
+        // data set. This will trigger the ListView to update.
+        if (news != null && !news.isEmpty()) {
+            mAdapter.addAll(news);
         }
+        Log.v(LOG_TAG, "Loader is finished");
+    }
 
-        @Override
-        protected void onPostExecute(List<News> data) {
-            // Clear the adapter of previous earthquake data
-            mAdapter.clear();
-
-            // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
-            // data set. This will trigger the ListView to update.
-            if (data != null && !data.isEmpty()) {
-                mAdapter.addAll(data);
-            }
-        }
+    @Override
+    public void onLoaderReset(Loader<List<News>> loader) {
+        // Clear the adapter of previous news data
+        mAdapter.clear();
+        Log.v(LOG_TAG, "Loader is resetted");
     }
 }
